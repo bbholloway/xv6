@@ -190,6 +190,10 @@ UPROGS=\
 	_wc\
 	_zombie\
         _shutdown\
+	_writecount\
+	_setwritecount\
+	_processeslist\
+	
 
 
 fs.img: mkfs README $(UPROGS)

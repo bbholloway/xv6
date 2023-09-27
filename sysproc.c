@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "processinfo.h"
 
 int
 sys_fork(void)
@@ -100,5 +101,34 @@ sys_yield(void)
 int sys_shutdown(void)
 {
   shutdown();
+  return 0;
+}
+
+extern int getprocessesinfo(struct processes_info *p);
+
+int sys_getprocessesinfo(void){
+  //we are going to use argptr(index)
+  struct processes_info *p;
+  if (argptr(0,(void *)&p, sizeof (*p))<0){
+    return -1;
+  }
+  getprocessesinfo(p);
+  return 0;
+}
+
+int sys_settickets(void){
+  int temp = 0;
+
+  //struct proc *p = myproc();
+  if (argint(0,&temp) < 0){
+    return -1;
+  }
+  argint(0,&temp);
+  if(temp <= 0 || temp > 100000){
+    return -1;
+  }
+  //argptr(0,p->tickets,sizeof(int));
+
+  myproc()->tickets = temp;
   return 0;
 }

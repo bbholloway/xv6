@@ -16,6 +16,9 @@
 #include "file.h"
 #include "fcntl.h"
 
+int writes = 0;
+int tickets = 10;
+
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -85,8 +88,10 @@ sys_write(void)
   int n;
   char *p;
 
+  
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+  writes++;
   return filewrite(f, p, n);
 }
 
@@ -440,5 +445,27 @@ sys_pipe(void)
   }
   fd[0] = fd0;
   fd[1] = fd1;
+  return 0;
+}
+
+// return how many clock tick interrupts have occurred
+// since start.
+int
+sys_writecount(void)
+{
+  uint writecounts = writes;
+  return writecounts;
+}
+
+int
+sys_setwritecount(void)
+{
+  //int tempWrite = 0;
+
+  if(argint(0, &writes) < 0)
+    return -1;
+  
+  argint(0, &writes);
+  //writes = tempWrite;
   return 0;
 }
